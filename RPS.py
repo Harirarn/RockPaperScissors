@@ -102,7 +102,8 @@ if __name__ == "__main__":
             win = draw = loss = 0
         elif response in "RPS":
             bot_response = medium_bot.next()
-            medium_bot.respond(response, 1.0)
+            probs = medium_bot.nnm.layers[-1]
+            medium_bot.respond(response, 0.1)
             if (response, bot_response) in [("R", "S"), ("P", "R"), ("S", "P")]:
                 win += 1
                 vs = ">"
@@ -112,14 +113,15 @@ if __name__ == "__main__":
             else:
                 loss += 1
                 vs = "<"
-            print(f" {response} {vs} {bot_response} [{win:4d}|{draw:4d}|{loss:4d}]  :", end="")
+            print(f" {response} {vs} {bot_response} [{win:4d}|{draw:4d}|{loss:4d}]  :", end = "")
+            #print(f" [{probs[0]:.2f}, {probs[1]:.2f}, {probs[2]:.2f}] :", end = "")
         elif response == "T":
             data = "".join(random.choice("RPS") for i in range(30))
             data += "R"*15 + "P"*15 + "S"*15 + "P"*15 + "R"*15 + "S"*15
-            data += "RPS"*10 + "PRS"*10 + "RP"*10 + "PS"*10 + "SR"*10
+            data += "RPS"*10 + "PRS"*40 + "RP"*10 + "PS"*10 + "SR"*10
             data += "RPP"*5 + "PSS"*5 + "SRR"*5 + "SSR"*5 + "PPS"*5 + "RRP"*5
             data += "".join(random.choice("RPS") for i in range(15))
-            medium_bot.train(data)
+            medium_bot.train(data, 0.1)
             print("Did some standard training.")
         else:
             print("Unrecognised response  :", end = "")
